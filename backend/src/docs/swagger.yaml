@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: Primetrade Scalable API
+  description: A scalable REST API with Auth, RBAC, and Note CRUD.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                email: { type: string }
+                password: { type: string }
+                role: { type: string, enum: [user, admin] }
+      responses:
+        201:
+          description: Created
+  /auth/login:
+    post:
+      summary: Login a user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        200:
+          description: OK
+  /notes:
+    get:
+      summary: Get all user notes
+      tags: [Notes]
+      security: [{ bearerAuth: [] }]
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Create a new note
+      tags: [Notes]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                content: { type: string }
+      responses:
+        201:
+          description: Created
+  /users:
+    get:
+      summary: Get all users (Admin only)
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        200:
+          description: OK
