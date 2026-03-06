@@ -6,7 +6,15 @@ import Note from '../models/note.model.js';
 // @route   GET /api/v1/notes
 // @access  Private
 export const getNotes = asyncHandler(async (req, res, next) => {
-    const notes = await Note.find({ user: req.user.id });
+    let query;
+
+    if (req.user.role === 'admin') {
+        query = Note.find().populate('user', 'name email');
+    } else {
+        query = Note.find({ user: req.user.id });
+    }
+
+    const notes = await query;
 
     res.status(200).json({
         success: true,
